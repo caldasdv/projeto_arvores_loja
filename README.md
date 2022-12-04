@@ -1,4 +1,4 @@
-# projeto-arvores-loja
+# Projeto sistema de Loja com árvores
 Projeto de estrutura de dados que usa árvores para armazenar produtos de uma loja.
 
 ## Linguagens utilizadas:
