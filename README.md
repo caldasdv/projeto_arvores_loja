@@ -32,4 +32,4 @@ Projeto de estrutura de dados que usa árvores para armazenar produtos de uma lo
 - [x] Relatório de vendas.
 
 ### Semana 4: 26/12/22 até 02/01/23
-- [x ] Testes e manutenção de codigo.
+- [x] Testes e manutenção de codigo.
