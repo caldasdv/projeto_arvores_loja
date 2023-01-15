@@ -118,14 +118,46 @@ No * remover(No *raiz, int matricula){
     }
 }
 
+void alterar(No *raiz, int matricula, int tipo, float preco, int quantidade, int vendido){
+    if(raiz != NULL){
+        if(raiz->produto.matricula == matricula){
+            raiz->produto.tipo = tipo;
+            raiz->produto.preco = preco;
+            raiz->produto.quantidade = quantidade;
+            raiz->produto.vendido = vendido;
+        }else{
+            if(matricula < raiz->produto.matricula){
+                alterar(raiz->esq, matricula, tipo, preco, quantidade, vendido);
+            }else{
+                alterar(raiz->dir, matricula, tipo, preco, quantidade, vendido);
+            }
+        }
+    }
+}
+
+void venda(No *raiz, int matricula, int vendido){
+    if(raiz != NULL){
+        if(raiz->produto.matricula == matricula){
+            raiz->produto.quantidade -= vendido;
+            raiz->produto.vendido += vendido;
+        }else{
+            if(matricula < raiz->produto.matricula){
+                venda(raiz->esq, matricula, vendido);
+            }else{
+                venda(raiz->dir, matricula, vendido);
+            }
+        }
+    }
+}
+
 void imprimir(No *raiz){
     if(raiz != NULL){
         imprimir(raiz->esq);
-        printf("Matricula: %d", raiz->produto.matricula);
-        printf("Tipo: %d", raiz->produto.tipo);
+        printf("\nMatricula: %d\n", raiz->produto.matricula);
+        printf("Tipo: %d\n", raiz->produto.tipo);
         printf("Preco: %.2f\n", raiz->produto.preco);
-        printf("Quantidade: %d", raiz->produto.quantidade);
-        printf("Vendido: %d", raiz->produto.vendido);
+        printf("Quantidade: %d\n", raiz->produto.quantidade);
+        printf("Vendido: %d\n\n", raiz->produto.vendido);
         imprimir(raiz->dir);
     }
 }
@@ -134,17 +166,73 @@ void imprimirArvore(Arvore *arvore){
     imprimir(arvore->raiz);
 }
 
+void iproduto(No * raiz, int i){
+    if (raiz == NULL)
+    {
+        return;
+    }
+    
+    if (raiz != NULL && raiz->produto.matricula == i){    
+        printf("\nMatricula: %d\n", raiz->produto.matricula);
+        printf("Tipo: %d\n", raiz->produto.tipo);
+        printf("Preco: %.2f\n", raiz->produto.preco);
+        printf("Quantidade: %d\n", raiz->produto.quantidade);
+        printf("Vendido: %d\n\n", raiz->produto.vendido);
+
+    }
+    if (raiz->produto.matricula < i)
+    {
+        iproduto(raiz->dir, i);
+    }
+    if (raiz->produto.matricula > i)
+    {
+        iproduto(raiz->esq, i);
+    }
+    
+}
+
+void imprimirproduto(Arvore * arvore, int i){
+    iproduto(arvore->raiz, i);
+}
+
 void relatoriovendas(No *raiz){
+    if (raiz == NULL)
+    {
+        return;
+    }
+    
     if(raiz != NULL && raiz->produto.vendido >= 1){
         relatoriovendas(raiz->esq);
-        printf("Matricula: %d", raiz->produto.matricula);
-        printf("Tipo: %d", raiz->produto.tipo);
-        printf("Vendido: %d", raiz->produto.vendido);
+        printf("\nMatricula: %d\n", raiz->produto.matricula);
+        printf("Tipo: %d\n", raiz->produto.tipo);
+        printf("Vendido: %d\n\n", raiz->produto.vendido);
+        relatoriovendas(raiz->dir);
     }
 }
 
 void imprimirrelatoriovendas(Arvore *arvore){
     relatoriovendas(arvore->raiz);
+}
+
+void relatorioportipo(No *raiz, int i){
+    if (raiz == NULL)
+    {
+        return;
+    }
+    
+    if(raiz != NULL && raiz->produto.tipo == i){
+        relatorioportipo(raiz->esq, i);
+        printf("\nMatricula: %d\n", raiz->produto.matricula);
+        printf("Tipo: %d\n", raiz->produto.tipo);
+        printf("Preco: %.2f\n", raiz->produto.preco);
+        printf("Quantidade: %d\n", raiz->produto.quantidade);
+        printf("Vendido: %d\n\n", raiz->produto.vendido);
+        relatorioportipo(raiz->dir, i);
+    }
+}
+
+void imprimirrelatorioportipo(Arvore *arvore, int i){
+    relatorioportipo(arvore->raiz, i);
 }
 
 int login(){
@@ -208,51 +296,65 @@ int main(){
 
     if (login()!= 1)
     {
-        return 0;
+       return 0;
     }   
 
     Arvore arvore;
     inicializar(&arvore);
     Produto produto;
 
-    int opcao;
+    int opcao,op;
     do{
-        printf("1 - Inserir produto");
-        printf("2 - Remover produto");
-        printf("3 - Buscar produto");
-        printf("4 - Alterar produto");
-        printf("5 - Imprimir todos os produtos");
-        printf("6 - vender produto");
-        printf("7 - relatorio de vendas");
-        printf("8 - Sair");
+        printf("\n1 - Inserir produto\n");
+        printf("2 - Remover produto\n");
+        printf("3 - Buscar produto\n");
+        printf("4 - Alterar produto\n");
+        printf("5 - Imprimir todos os produtos\n");
+        printf("6 - vender produto\n");
+        printf("7 - relatorio de vendas\n");
+        printf("8 - relatorio por tipo\n");
+        printf("9 - Sair\n");
         scanf("%d", &opcao);
         switch(opcao){
             case 1:
+                printf("\n*Inserir produto*\n\n");
                 printf("Digite a matricula do produto: ");
                 scanf("%d", &produto.matricula);
+                if (buscar(arvore.raiz, produto.matricula) == 1){
+                    printf("Produto ja cadastrado!\n");
+                    break;
+                }
                 printf("Digite o tipo do produto: ");
                 scanf("%d", &produto.tipo);
                 printf("Digite o preco do produto: ");
                 scanf("%f", &produto.preco);
                 printf("Digite a quantidade do produto: ");
-                scanf("%d", &produto.quantidade);                
+                scanf("%d", &produto.quantidade);
+                printf("Digite a quantidade vendida do produto: ");
+                scanf("%d", &produto.vendido);              
                 inserir(&arvore, produto);
+                printf("Produto inserido com sucesso!\n");
                 break;
             case 2:
+                printf("\n*Remover produto*\n\n");
                 printf("Digite a matricula do produto: ");
                 scanf("%d", &produto.matricula);
                 remover(arvore.raiz, produto.matricula);
+                printf("Produto removido com sucesso!\n");
                 break;
             case 3:
+                printf("\n*Buscar produto*\n\n");
                 printf("Digite a matricula do produto: ");
                 scanf("%d", &produto.matricula);
                 if(buscar(arvore.raiz, produto.matricula) == 1){
                     printf("Produto encontrado\n");
+                    imprimirproduto(&arvore, produto.matricula);
                 }else{
                     printf("Produto nao encontrado\n");
                 }
                 break;
             case 4: 
+                printf("\n*Alterar produto*\n\n");
                 printf("Digite a matricula do produto: ");
                 scanf("%d", &produto.matricula);
                 if(buscar(arvore.raiz, produto.matricula) == 1){
@@ -263,40 +365,62 @@ int main(){
                     scanf("%f", &produto.preco);
                     printf("Digite a quantidade do produto: ");
                     scanf("%d", &produto.quantidade);
-                    remover(arvore.raiz, produto.matricula);
-                    inserir(&arvore, produto);
+                    printf("Digite a quantidade vendida do produto: ");
+                    scanf("%d", &produto.vendido);
+                    alterar(arvore.raiz, produto.matricula, produto.tipo, produto.preco, produto.quantidade, produto.vendido);
                 }else{
                     printf("Produto nao encontrado\n");
                 }
                 break;
             case 5:
+                printf("\n*Imprimir todos os produtos*\n\n");
                 imprimirArvore(&arvore);
                 break;
             case 6:
+                float valor,dinheiro;
+                printf("\n*Vender produto*\n\n");
                 printf("Digite a matricula do produto: ");
                 scanf("%d", &produto.matricula);
                 if(buscar(arvore.raiz, produto.matricula) == 1){
-                    printf("Digite a quantidade de produtos: ");
-                    scanf("%d", &produto.quantidade);
-                    remover(arvore.raiz, produto.matricula);
-                    produto.quantidade--;
-                    produto.vendido++;
-                    inserir(&arvore, produto);
-                }else{
-                    printf("Produto nao encontrado\n");
+                    printf("Digite a quantidade de vendas: ");
+                    scanf("%d", &produto.vendido);
+                    valor = produto.preco * produto.quantidade;
+                    printf("Valor total: %.2f\n", valor);
+                    printf("Digite o dinheiro: ");
+                    scanf("%f", &dinheiro);
+                    if (dinheiro < valor)
+                    {
+                        printf("Dinheiro insuficiente\n");
+                        break;
+                    }
+                    else
+                    {
+                        dinheiro = dinheiro - valor;
+                        printf("Troco: %.2f\n", dinheiro);
+                        produto.quantidade = produto.quantidade - produto.vendido;
+                        venda(arvore.raiz, produto.matricula, produto.vendido);
+                    }                            
                 }
                 break;
             case 7:
+                printf("\n*Relatorio de vendas*\n\n");
                 imprimirrelatoriovendas(&arvore);
                 break;
-            case 8:
-                printf("Saindo...");
+            case 8: 
+
+                printf("*Relatorio por tipo*\n\nDigite o tipo do produto: ");
+                scanf("%d", &produto.tipo);
+                imprimirrelatorioportipo(&arvore, produto.tipo);
+                break;
+            case 9:
+                printf("Saindo...\n");
                 break;
             default:
-                printf("Opcao invalida");
+                printf("Opcao invalida\n");
                 break;
         }
-    }while(opcao != 8);
+    }
+    while(opcao != 9);
     
-    return 0;
+    return 0;    
 }
