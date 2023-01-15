@@ -18,7 +18,7 @@ Projeto de estrutura de dados que usa árvores para armazenar produtos de uma lo
 * Prazo de entrega: 16/01/23.
 
 ### Semana 1: 05/12/22 até 12/12/22.
-- [ ] Fazer um sistema de login com 2 niveis de vizualizção (Administração, caixa).
+- [x] Fazer um sistema de login.
 - [x] Sistema de cadastro de produtos.
 - [x] Sistema de alteração de produtos.
 
