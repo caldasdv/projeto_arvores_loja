@@ -1,4 +1,3 @@
-
 #include "projetoarvores.c"
 
 int main(){
